@@ -7,7 +7,6 @@ function setup() {
 }
 
 function draw() {
-  background(0, 20);
   for (const walker of walkers) {
     if (!walker.isOut()) {
       walker.draw()
@@ -20,42 +19,41 @@ class Walker {
   constructor(x, y) {
     this.x = x
     this.y = y
-
-    this.prevX = x
-    this.prevY = y
-
     this.velX = random(-2, 2)
     this.velY = random(-2, 2)
+    this.startColor = color(random()*255, random()*255, random()*255)
+    //this.endColor = color(130, 20, 200)
+    this.endColor = color(random()*255, random()*255, random()*255)
 
-    this.startColor = randomColor()
-    this.endColor = randomColor()
+    this.offsetX = random(0, 100)
+    this.offsetY = random(0, 100)
   }
   
   draw () {
     let c = lerpColor(this.startColor, this.endColor, noise(this.x, this.y))
     stroke(c);
-    line(this.prevX, this.prevY, this.x, this.y)
+    // point(this.x, this.y);
   }
 
   update() {
-    this.velocity()
+    let s = 30
+    let pX = noise((this.x + this.offsetX) * 0.005, (this.y + this.offsetX) * 0.005, millis())
+    let pY = noise((this.x + this.offsetY) * 0.005, (this.y + this.offsetY) * 0.005, millis())
+
+    this.velX = map(pX, 0, 1, -s/2, s/2)
+    this.velY = map(pY, 0, 1, -s/2, s/2)
+
+    //this.velX = random(-s/2, s/2)
+    //this.velY = random(-s/2, s/2)
     this.move()
   }
 
-  velocity() {
-    let s = 5
-    //this.velX += random(-s/2, s/2)
-    //this.velY += random(-s/2, s/2)
-
-    this.velX += map(noise(this.x * 0.05, this.y * 0.05), 0, 1, -1, 1);
-    this.velY += map(noise(this.y * 0.05, this.x * 0.05), 0, 1, -1, 1);
-  }
-
   move() {
-    this.prevX = this.x
-    this.prevY = this.y
+    let oldX = this.x
+    let oldY = this.y
     this.x += this.velX
     this.y += this.velY
+    line(oldX, oldY, this.x, this.y)
   }
 
   isOut () {
@@ -64,7 +62,7 @@ class Walker {
 }
 
 function mouseClicked() {
-  let n = 1000
+  let n = 5
   for (let i = 0; i < n; i++) {
     let walker = new Walker(mouseX, mouseY);
     walkers.push(walker) 

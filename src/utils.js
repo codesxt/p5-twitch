@@ -5,3 +5,7 @@ function randomX() {
 function randomY() {
   return parseInt(Math.random() * height);
 }
+
+function randomColor() {
+  return color(random(255), random(255), random(255))
+}
